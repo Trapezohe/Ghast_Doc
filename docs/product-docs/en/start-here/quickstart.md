@@ -1,100 +1,94 @@
 ---
 title: Quickstart
+description: The shortest path from a fresh install to your first conversation.
 ---
 
 # Quickstart
 
-## Overview
+This page is the shortest path from a fresh install to your first conversation. Each step links to a deeper page when you need more detail.
 
-This page provides the shortest supported onboarding path for Ghast AI.
+## Before you begin
 
-## Quickstart path
+- macOS 11 or newer (Apple Silicon or Intel)
+- About 1 GB of free disk space
+- An email you can receive a verification code at
+- A 0G wallet (optional — Ghast can generate one for you)
 
-1. Install the extension from the [Chrome Web Store](https://chromewebstore.google.com/detail/ghast-ai/nnhdkkgpoeojjddikcjadgpkbfbjhcal).
-2. Open the sidebar and sign in with a Google account.
-3. Complete activation using the invitation code prompt if your account has not yet been activated.
-4. Create or import a wallet, then set a local unlock password.
-5. Follow any additional guidance to connect workspaces, remote control, or models; install Companion only when stronger local capabilities are clearly needed.
-6. Open a supported page and begin using the sidebar chat.
+If you do not have a 0G wallet yet, Ghast will create one in onboarding and show you the mnemonic. You will need to write it down.
 
-If you only want to evaluate the product, reaching step 4 is usually enough to explore the core path.
+## Step 1 — Install Ghast AI Desktop
 
-## If this is your first time
+Download the signed DMG for your CPU architecture (Apple Silicon or Intel), open it, and drag **Ghast AI** into Applications. Detailed install notes are in [Install Ghast AI Desktop](/en/desktop/install).
 
-### If you just want to try the product
+## Step 2 — Sign in
 
-- Install the extension.
-- Sign in.
-- Finish activation.
-- Create or import a wallet.
-- Begin chatting and using page-context features immediately.
+Open the app. The first window is the **Sign In** screen.
 
-This lighter sequence lets you confirm the core experience before adding local complexity.
+1. Enter your email and request a verification code, or use Google OAuth.
+2. Enter the code you received.
+3. The app verifies the session and moves you into **Onboarding**.
 
-### If you plan to integrate local capabilities quickly
+Full flow: [Sign In & Activation](/en/desktop/sign-in-and-activation).
 
-- Finish the extension install, sign-in, and wallet setup.
-- Download the Companion installer from the [official Releases page](https://github.com/Trapezohe/companion_service/releases).
-- Verify the package against `SHA256SUMS.txt`.
-- Install Companion and let the extension automatically detect it.
-- Initially connect to the workspace using the default, more conservative boundaries.
-- Gradually explore stronger local capabilities thereafter.
+## Step 3 — Onboarding
 
-This path is better suited when the goal is workspace access, local automation, or a fuller local assistant workflow.
+Onboarding asks you to:
 
-## How to read the onboarding steps
+1. Pick an interface language (11 available)
+2. Set a nickname
+3. Pick appearance (system / light / dark)
+4. Set up a wallet — one of:
+   - **Create a new wallet** — Ghast generates one and shows the mnemonic. Write it down. You will be asked to confirm.
+   - **Import from mnemonic**
+   - **Import from raw private key**
 
-| Step | How to interpret it |
-| --- | --- |
-| Wallet | A critical foundation; prioritize this step early. |
-| Workspace | Only necessary when you intend to use local workspace abilities. |
-| Remote control | Configure this only if you require remote access. |
-| Models | Refine this when you are preparing for production-level usage. |
-| Companion | Install when you are ready to rely on more advanced local capabilities. |
+After the wallet step, the client signs a challenge with your local wallet to bind it to your profile.
 
-Not every onboarding step carries the same priority.
+## Step 4 — Start chatting
 
-## Before you continue
+Before the model picker has anything to offer, you need at least one provider configured. The fastest path is the **0G Router**:
 
-### Companion is not mandatory at the start
+1. Open <https://pc.0g.ai/> (the 0G Compute Console) in a browser, sign up, top up a balance, and generate an API key.
+2. In Ghast, go to **Settings → Providers → Router** and paste the API key.
+3. The Router's models now appear in the model picker.
 
-Ghast AI's core capabilities mostly work without Companion, so you can learn the extension before adding local components.
+Then, in the main chat window:
 
-### Companion is distributed via release packages
+- Type a prompt in the composer at the bottom and press Enter.
+- The response streams in. Tool calls (if any) appear as collapsible cards.
+- File attachment and voice input are available from the icons in the composer.
 
-When local capabilities are required, download the installer directly from the [official Releases page](https://github.com/Trapezohe/companion_service/releases). The standard path is to use the provided macOS `.pkg` or Windows `.msi` package rather than installing through a terminal.
+## Step 5 — Optional integrations, one at a time
 
-### Expect system security prompts during installation
+Add these only as you need them. None is required for the desktop chat to work.
 
-The current installers do not include a code-signing certificate, so macOS and Windows may warn that the software is unsigned. Treat these prompts as normal when the following are confirmed:
-
-- The installer comes from the official Releases page.
-- The checksum matches `SHA256SUMS.txt`.
-
-Only proceed after confirming both points. The common prompts and recommended actions are:
-
-| Operating system | Prompt | Recommended handling |
+| Integration | What it unlocks | Where to go |
 | --- | --- | --- |
-| macOS | Gatekeeper reports an unidentified developer or blocks the installer | Confirm the source and checksum, open System Settings > Privacy & Security to allow this installation, and retry. |
-| Windows | SmartScreen displays "Windows protected your PC" | Confirm the source and checksum, click "More info," and continue only if you trust the publisher. |
+| **Advanced 0G provider** | A specific on-chain TEE model with capability badges | [Inference Modes](/en/web3/inference-modes) |
+| **0G Storage sync** | Encrypted cross-device backup of memories, settings, etc. | [0G Storage Sync](/en/web3/0g-storage-sync) |
+| **Chrome extension** | The agent can drive your real Chrome | [Browser Extension](/en/browser-extension/install-and-pair) |
+| **Computer Use** | The agent can operate macOS apps | [Computer Use](/en/computer-use/macos-permissions) |
+| **Messaging bridge** | The agent responds inside Telegram / Discord / Slack / Feishu / WeChat | [Remote Channels](/en/remote-channels/overview) |
+| **MCP servers** | Add external tools to the agent | [MCP Servers](/en/desktop/mcp-servers) |
+| **Partner Mode** | Long-term collaboration personality | [Partner Mode](/en/partner-mode/overview) |
 
-If you cannot verify the origin or the checksum, stop the installation.
+## A typical first session
 
-## Recommended order
+A reasonable first 15 minutes:
 
-1. Complete extension installation, sign-in, and wallet configuration.
-2. Experience chat and page-context capabilities on supported sites.
-3. After confirming the product fits your needs, add Companion.
-4. If Companion is installed, rely on the official installer and automatic detection.
-5. Only then configure workspaces, remote control, and deeper local capabilities.
+1. Install, sign in, create a wallet, complete onboarding.
+2. Top up the 0G Compute Console and paste your Router API key into Ghast.
+3. Send 2–3 messages to confirm Router chat works.
+4. Open Settings → Memory and skim what gets stored.
+5. Open Settings → Wallet to view your address (and, if you plan to use Advanced providers, deposit a small amount of OG into your 0G Ledger for later).
+6. Close the app, reopen it, and check that your conversation is still there.
 
-This approach lets you understand the product before expanding into deeper local capabilities.
-
-Ghast AI currently recommends "extension first, Companion later." Ordinary users can begin using the product once installation, sign-in, and wallet setup are complete. Install Companion from the [official Releases page](https://github.com/Trapezohe/companion_service/releases) only when you need workspace or stronger local capabilities, and favor automatic detection.
+If all six steps work, the install is healthy. From there you can move into the integrations table above at your own pace.
 
 ## Related pages
 
-- [Install the Extension](/en/extension/install-extension)
-- [Sign In and Activation](/en/extension/sign-in-and-activation)
-- [Wallet Setup](/en/extension/wallet-setup)
-- [Install Companion](/en/start-here/install-companion)
+- [System Requirements](/en/start-here/system-requirements)
+- [Install Ghast AI Desktop](/en/desktop/install)
+- [Sign In & Activation](/en/desktop/sign-in-and-activation)
+- [Wallet & Key Custody](/en/web3/wallet-and-key-custody)
+- [Troubleshooting: Login & Activation](/en/troubleshooting/login-and-activation)

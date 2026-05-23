@@ -1,105 +1,95 @@
 ---
 title: 产品架构一览
+description: 实用视角下的 Ghast AI 分层结构，以及日常使用中真正重要的边界。
 ---
 
 # 产品架构一览
 
-## 本页说明
+本页说明 Ghast AI 是怎么组装起来的，让你阅读后续章节时有上下文。你不需要记住内部细节，但理解"哪一层负责什么"会让你在思考权限、数据、故障模式时心里有数。
 
-本页用于帮助你快速理解 Ghast AI 由哪些部分组成、这些部分分别负责什么，以及在日常使用中你需要关心哪些边界。
+## 五层结构
 
-Ghast AI 不是单一插件，也不是单一本地程序。当前产品由浏览器扩展、本地 Companion 服务和远端账号 / 模型能力共同组成。
-
-## 产品由什么组成
-
-| 组件 | 你会看到什么 | 主要作用 |
+| 层 | 是什么 | 主要职责 |
 | --- | --- | --- |
-| Ghast AI 扩展 | Chrome 侧边栏 | 对话、记忆、技能、钱包、模型、设置 |
-| Ghast Companion | 本地服务 | 工作区访问、本地命令、MCP、诊断、自检等高级能力 |
+| **Ghast AI Desktop** | macOS Electron 客户端 | 主要产品入口。对话、记忆、技能、设置、MCP、ACP、Computer Use、消息桥接都在这里。 |
+| **0G Compute 网络** | EVM 兼容链（chain ID 16661）+ 供应商注册表 | 推理实际发生的地方。可以走 Router（托管端点，在 0G Compute Console 付费），也可以走用钱包充值过的特定链上 TEE 供应商。 |
+| **0G Storage 网络** | 去中心化存储 + 链上指针注册表 | 可选的本地数据加密备份。默认关闭。 |
+| **Ghast Browser Relay** | Chrome 扩展（Manifest V3） | 让 Desktop Agent 通过 CDP 操控你已经登录的 Chrome 的中继。 |
+| **Computer Use 守护进程** | 原生 Swift 辅助程序 | 通过 macOS 辅助功能 API 与 CoreGraphics 驱动 macOS。Desktop 通过本地 Unix Socket 调用它。 |
 
-对大多数用户来说，可以先这样理解：
+其他所有东西（钱包、Profile Vault、消息桥接 token）都是围绕这五层组织的。
 
-- 扩展负责你在浏览器里直接使用的大部分功能。
-- Companion 负责把浏览器做不到的本地能力补上。
+## Agent 跑在哪里
 
-## 不安装 Companion 时能做什么
+推理**总是在你的机器之外**发生——要么经过 0G Router（从你的 0G Compute Console 余额扣费），要么经过你用钱包直接充值过的链上 TEE 供应商。供应商执行；你付费。
 
-即使没有安装 Companion，当前扩展仍然可以完成这些工作：
+而**其他所有事情**——上下文组装、工具执行、记忆检索、技能编排、与守护进程的 IPC、消息桥接——都跑在 Desktop 客户端里。Agent 的"大脑"在远端；Agent 的"身体"在本地。
 
-- 登录和激活账号
-- 在侧边栏中聊天
-- 管理钱包
-- 管理记忆
-- 导入和管理技能
-- 选择模型与查看充值相关状态
-- 在受支持站点上读取页面上下文
+这是有意为之。这意味着：给模型提供上下文不需要把你的数据搬出机器；同一个本地"身体"可以换不同的模型而不丢失记忆。
 
-这意味着 Ghast AI 的基础使用路径并不依赖 Companion。
+## 数据在哪里
 
-## 安装 Companion 后会多出什么
+| 位置 | 内容 | 什么时候会离开机器 |
+| --- | --- | --- |
+| `~/<userData>/profiles/<id>/ghast.db` | 对话、记忆、设置、技能记录、MCP 配置 | 仅当你为该类别开启 0G Storage 同步 |
+| `~/<userData>/profiles/<id>/wallet.json` | 加密的钱包私钥 | 永不离开。只有在内存中临时解密用来签名 |
+| `~/Library/Application Support/Ghast/computer-use.sock` | 守护进程的本地 IPC socket | 永不离开。仅本地 socket，无网络暴露 |
+| `~/<userData>/profiles/<id>/live-browser.json` | Browser Relay 端口与认证 token | 永不离开。只在 Settings 里向你展示 |
 
-安装 Companion 之后，Ghast AI 才能成为真正的“AI助手完全体”，包括：
+如果你开启了 0G Storage 同步，所选类别的快照会用钱包派生（HKDF-SHA256）的密钥端到端加密后上传到存储网络，得到的内容哈希作为指针写入链上注册表。解密密钥不在任何机外位置存储。
 
-- 连接工作区
-- 访问本地命令运行环境
-- 托管和使用 MCP Servers
-- 运行更高级的代码代理或本地 Agent 能力
-- 查看本地诊断、自检和修复状态
-- 在浏览器离线或重连场景下补齐部分本地任务能力
+## 信任边界在哪
 
-如果你只需要浏览器内的基础使用体验，可以先不安装 Companion；如果你需要文件、命令、MCP 或更强的自动化能力，Companion 就是必要组件。
-
-## 三部分是怎样配合工作的
-
-### 浏览器扩展
-
-浏览器扩展是产品的主入口。你在侧边栏中看到的 `Chat`、`Memory`、`Skills`、`Settings` 都属于扩展本体。
-
-### 本地 Companion
-
-Companion 是扩展之外的本地服务。它存在的原因很直接：浏览器本身无法安全、稳定地承担本地文件、命令和 MCP 这类能力。
-
-因此，Companion 的定位不是“另一个界面”，而是“浏览器外的本地能力层”。
-
-### 远端服务
-
-远端服务主要承担账号和网络侧能力，例如登录、激活、模型发现和部分远端状态同步。它不是本地执行环境，也不会替代你的本机边界。
-
-## 使用时最需要记住的边界
-
-| 边界 | 当前含义 |
+| 边界 | 含义 |
 | --- | --- |
-| 浏览器边界 | 扩展是主入口，但浏览器内能力天然受限 |
-| 本地边界 | Companion 提供本地能力，但是否放开范围取决于当前权限模式 |
-| 页面边界 | 页面上下文只在受支持站点和受支持模式下采集 |
-| 钱包边界 | 钱包由扩展本地管理，不托管到 Companion |
-| 账号边界 | 登录和激活依赖远端服务，但不等于远端直接获得本地执行能力 |
+| 钱包边界 | Ghast 不托管资金。每一笔链上交易都在本地用你的私钥签名。 |
+| Profile 边界 | 每个 Profile 完全隔离——独立钱包、记忆、对话、桥接 token。切换 Profile 时旧 Vault Key 从内存擦除。 |
+| macOS 边界 | Computer Use 需要"辅助功能"权限**且**每应用单独审批。Swift 守护进程还有一份硬黑名单，即使 UI 批准也会拒绝。 |
+| Chrome 边界 | 扩展只接受 `localhost` 连接。鉴权是每 Profile 随机生成的 token，可以一键 rotate。 |
+| 通道边界 | 消息桥接只路由你显式映射到工作区的频道。未映射的消息被忽略。 |
+| 云端边界 | 0G Storage 同步按类别 opt-in 且端到端加密。Ghast 无法解密你的备份。 |
 
-## 默认使用路径
+## 安装后立即可用的能力
 
-对于通过标准方式安装产品的用户，当前默认路径通常是：
+安装 Desktop 客户端并创建钱包后，下列本地能力立刻可用：
 
-1. 安装扩展并登录。
-2. 完成邀请码激活。
-3. 创建或导入本地钱包。
-4. 按需安装 Companion。
-5. 如果安装 Companion，默认先以 `workspace` 模式使用，而不是直接放开整台机器。
+- 本地记忆与技能系统
+- 每次新对话时的记忆召回
+- 活动记录（本地、默认关闭）
+- 语音输入（Whisper）与 TTS（Kokoro / Qwen）
 
-这条默认路径的设计目的，是让大多数用户先获得可用能力，再逐步打开更强的本地能力，而不是一开始就把所有边界放宽。
+## 上手聊天的前置步骤
 
-## 这页对使用手册意味着什么
+模型选择器在你接入任意 Provider 之前是空的。最常见的起步路径：
 
-阅读后续文档时，可以始终用下面的方式理解整个产品：
+- **Router**：到 <https://pc.0g.ai/> 注册 0G Compute Console、充值、生成 API key，粘到 Settings → Providers → Router。
+- **Advanced**（可选）：在 Settings → Providers → Advanced 启用具体链上供应商，用本地钱包给子账户充值。
 
-- 看浏览器内功能，重点看扩展章节。
-- 看本地能力，重点看 Companion 章节。
-- 看权限和风险边界，重点看 Security 章节。
+## 不必立即开启的功能
 
-这也是 Ghast AI 手册后续结构的基础：先讲产品组成，再讲功能路径，再讲安全边界，而不是从内部实现细节开始。
+- Computer Use（需要 macOS 辅助功能授权 + 每应用审批）
+- Chrome 扩展（需要加载扩展并粘贴 token）
+- 消息桥接（每平台需要 bot token / OAuth）
+- 0G Storage 同步（默认关闭，按类别 opt-in）
+
+## 手册的组织方式
+
+阅读顺序大致按层级展开：
+
+1. **开始使用** — 产品是什么、如何安装
+2. **Web3 基础设施** — 链上层先讲，因为它会影响钱包/模型/同步选择
+3. **Desktop 客户端** — 主应用的每个界面，大致按你会先遇到的顺序
+4. **Computer Use** — Mac 侧操作，因为有独立权限模型，单列章节
+5. **浏览器扩展** — Chrome 中继，同理单列
+6. **远程消息通道** — 各平台桥接
+7. **Partner Mode** — 长期协作人格层
+8. **安全** — 所有信任边界集中说明，便于审查
+9. **参考** — 设置项、模型、技能、MCP、术语表
+10. **故障排查** — 按症状索引
 
 ## 相关页面
 
-- [什么是 Ghast AI](what-is-ghast-ai.md)
-- [快速开始](quickstart.md)
-- [Extension 与 Companion 的工作方式](../core-concepts/extension-and-companion.md)
-- [安全概览](../security/overview.md)
+- [什么是 Ghast AI](/cn/start-here/what-is-ghast-ai)
+- [快速开始](/cn/start-here/quickstart)
+- [0G Compute 概览](/cn/web3/0g-compute-overview)
+- [安全概览](/cn/security/overview)

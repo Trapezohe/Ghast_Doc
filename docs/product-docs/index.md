@@ -2,8 +2,8 @@
 layout: home
 hero:
   name: Ghast AI Docs
-  text: Product Manual
-  tagline: Choose your language. Production will route the root path to /en/.
+  text: User Manual
+  tagline: Pick a language. Production routes "/" to "/en/".
   actions:
     - theme: brand
       text: English
@@ -12,10 +12,10 @@ hero:
       text: 简体中文
       link: /cn/
 features:
-  - title: Product Manual
-    details: Structured user documentation for extension setup, Companion, security boundaries, and troubleshooting.
-  - title: Bilingual Launch
-    details: Chinese and English are prepared as separate routes so release scope stays explicit and auditable.
-  - title: Stable Entry Paths
-    details: Production will keep the root redirect and expose the live manuals at /en/ and /cn/.
+  - title: Web3-Native Compute
+    details: Inference flows through 0G Compute's Router and on-chain TEE providers. Your wallet, your keys, your usage receipts.
+  - title: Desktop-First, Local-First
+    details: A macOS Electron client with persistent memory, skills, MCP, and Computer Use. Local SQLite by default; cloud sync is opt-in and end-to-end encrypted via 0G Storage.
+  - title: One Agent Everywhere
+    details: The same agent extends into your Chrome browser, your messaging apps (Telegram / Discord / Slack / Feishu / WeChat), and your Mac itself.
 ---

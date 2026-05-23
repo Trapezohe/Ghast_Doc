@@ -1,23 +1,30 @@
 ---
 title: Extension Changelog
-description: Current confirmed extension version and the recommended places to verify release information.
+description: User-facing changes to the Ghast Browser Relay extension.
 ---
 
 # Extension Changelog
 
-## Current confirmed version
+User-facing changes to the Chrome extension that lets the agent operate your browser.
 
-- Current extension manifest version: `0.1.1`
+## 1.0.0 — 2026-05-18
 
-## Current documentation boundary
+- Initial public release of Ghast Browser Relay
+- Manifest V3, Chrome 120+
+- WebSocket bridge to Ghast Desktop with per-profile token auth
+- Tab management, screenshots (CDP `Page.captureScreenshot`), DOM inspection, JS evaluation, click / type / scroll by selector
+- Auto-dismiss for `alert` / `confirm` dialogs while the debugger is attached
+- Auto-reconnect with exponential backoff
+- Per-profile token rotation from Ghast Desktop
 
-The repository does not currently contain a separate extension changelog that is maintained version by version. This page currently records only where the version can be verified.
+## Reading this changelog
 
-## Recommended version sources
+The extension's version updates with each desktop release that includes a bundled extension change. If you loaded the extension manually (Option B in the install guide), reload it in `chrome://extensions` to pick up the new version after a desktop update.
 
-- Extension manifest / `wxt.config.ts`
-- Chrome Web Store listing
+If the extension introduces new Chrome permissions, that's surfaced both here and in the extension's [Security & Token Rotation](/en/browser-extension/security) page.
 
 ## Related pages
 
-- [Docs Changelog](docs-changelog.md)
+- [Browser Extension Overview](/en/browser-extension/overview)
+- [Install & Pair](/en/browser-extension/install-and-pair)
+- [Desktop Changelog](/en/release-notes/desktop-changelog)

@@ -1,26 +1,33 @@
 ---
-title: Ghast AI
-description: Product manual for the Ghast AI assistant inside the Chrome sidebar.
+title: Ghast AI Documentation
+description: Official user manual for Ghast AI — the on-chain-powered desktop AI partner.
 ---
 
-# Ghast AI
+# Ghast AI Documentation
 
-Ghast AI is the AI assistant built for the Chrome sidebar. This manual covers the standard user path, capability boundaries, security model, and troubleshooting guidance.
+Welcome to the Ghast AI user manual. Ghast AI is an on-chain-powered, desktop-first AI partner for macOS: inference runs through the **0G Compute** network, personal data is end-to-end encrypted into **0G Storage**, and the same agent extends from your desktop into your browser, your Mac, and the messaging apps your team already uses.
 
-## Start Here
+This manual is the source of truth for what Ghast AI ships today, how to set it up, and where the safety boundaries are.
 
-- [Start Here](/en/start-here/what-is-ghast-ai) - Product overview and the shortest supported path.
-- [Core Concepts](/en/core-concepts/extension-and-companion) - The operating model behind memory, context, remote control, and trust boundaries.
-- [Extension](/en/extension/install-extension) - Installation, sign-in, wallet, models, chat, and browser-side setup.
-- [Companion](/en/companion/install-and-auto-pair) - Local installation, workspace access, and connection checks.
-- [Remote Control](/en/remote-control/telegram-setup) - Telegram access, approval flow, actor labels, and channel limits.
-- [Security](/en/security/overview) - Permissions, wallet handling, local boundaries, and the OpenClaw comparison.
-- [Reference](/en/reference/settings-reference) - Stable reference pages for settings, memory files, capture support, and capability status.
-- [Troubleshooting](/en/troubleshooting/login-and-activation) - Common issues grouped by scenario.
-- [Release Notes](/en/release-notes/extension-changelog) - Change history for the extension, Companion, and this manual.
+## Quick Navigation
 
-## Documentation Scope
+- [Start Here](/en/start-here/what-is-ghast-ai) — understand the product and the shortest path to your first conversation
+- [Web3 Infrastructure](/en/web3/0g-compute-overview) — how 0G Compute, your wallet, and 0G Storage fit together
+- [Desktop Client](/en/desktop/install) — install, sign in, set up the wallet, and learn each surface of the desktop app
+- [Computer Use](/en/computer-use/overview) — let the agent operate macOS apps, with per-app approval
+- [Browser Extension](/en/browser-extension/overview) — Ghast Browser Relay, the bridge that lets the agent drive your real Chrome
+- [Remote Channels](/en/remote-channels/overview) — Telegram / Discord / Slack / Feishu / WeChat bridges
+- [Partner Mode](/en/partner-mode/overview) — the long-term collaboration layer, with explicit hard boundaries
+- [Security](/en/security/overview) — permissions, keys, data, and trust boundaries
+- [Reference](/en/reference/settings-reference) — settings, models, skills, MCP config
+- [Troubleshooting](/en/troubleshooting/login-and-activation) — common issues, by symptom
 
-- This manual documents only capabilities that can be confirmed in the current product.
-- Capabilities present in code but not exposed as primary user paths are not described as default actions.
-- Reference-style details stay in dedicated pages; the rest of the manual stays user-facing.
+## Scope of this manual
+
+- This manual only describes capabilities that currently exist in the shipping product.
+- Capabilities that exist in code but are not exposed as the default path are marked as **"implemented but not a default surface"**, not as features the user should rely on.
+- Reference pages collect fields, statuses, and ranges. Other pages read as a user manual, not as engineering documentation.
+
+## Audience
+
+The manual is written for end users and integrators of Ghast AI. Developer-facing topics (building skills, packaging the app, contributing) are not in scope here; see the source repository for those.

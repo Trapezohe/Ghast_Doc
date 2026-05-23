@@ -1,96 +1,94 @@
 ---
 title: 快速开始
+description: 从全新安装到第一次对话的最短路径。
 ---
 
 # 快速开始
 
-## 本页说明
+本页是从全新安装到第一次对话的最短路径。每一步都链向更详细的页面，需要时可以深入。
 
-本页提供 Ghast AI 当前最直接的上手路径，适合第一次安装和第一次使用时参考。
+## 开始之前
 
-## 最短上手路径
+- macOS 11 或更新版本（Apple Silicon 或 Intel 都行）
+- 大约 1 GB 可用磁盘空间
+- 一个能收验证码的邮箱
+- 一个 0G 钱包（可选——Ghast 可以替你生成）
 
-1. 从 [Chrome Web Store](https://chromewebstore.google.com/detail/ghast-ai/nnhdkkgpoeojjddikcjadgpkbfbjhcal) 安装扩展。
-2. 打开侧边栏，使用 Google 账号登录。
-3. 如果账号还没有完成激活，先按页面提示完成邀请码步骤。
-4. 创建钱包，或导入已有钱包，并设置本地解锁密码。
-5. 按需完成工作区、远程控制、模型等后续引导；只有在明确需要本地能力时，再安装 Companion。
-6. 打开一个受支持的页面，在 `Chat` 中直接开始使用。
+如果你还没有 0G 钱包，Ghast 会在 Onboarding 阶段帮你生成一个，并展示助记词。你需要把它抄下来。
 
-如果你只是想先看产品是否适合自己，做到第 4 步通常就已经可以开始体验基础使用路径。
+## 第 1 步 — 安装 Ghast AI Desktop
 
-## 第一次使用时，建议怎么走
+下载对应 CPU 架构（Apple Silicon 或 Intel）的签名 DMG，打开后把 **Ghast AI** 拖进"应用程序"文件夹。详细说明见 [安装 Ghast AI Desktop](/cn/desktop/install)。
 
-### 只想先体验产品
+## 第 2 步 — 登录
 
-推荐顺序：
+打开应用，第一个窗口是 **Sign In** 屏幕。
 
-- 安装扩展
-- 登录
-- 完成激活
-- 创建或导入钱包
-- 直接开始聊天和页面使用
+1. 输入邮箱并申请验证码，或者用 Google OAuth。
+2. 输入收到的验证码。
+3. 应用完成会话校验后进入 **Onboarding**。
 
-这条路径最轻，适合先确认 Ghast AI 的基础体验是否符合你的预期。
+完整流程：[登录与激活](/cn/desktop/sign-in-and-activation)。
 
-### 希望尽快接入本地能力
+## 第 3 步 — Onboarding
 
-推荐顺序：
+Onboarding 会引导你：
 
-- 完成扩展安装和钱包设置
-- 从[官方 Releases 页面](https://github.com/Trapezohe/companion_service/releases)下载安装 Companion 安装包
-- 先确认来源和 `SHA256SUMS.txt` 校验文件
-- 安装完成后，让扩展优先自动识别 Companion
-- 先按默认更收敛的方式连接工作区
-- 再逐步使用更强的本地能力
+1. 选择界面语言（共 11 种）
+2. 设置昵称
+3. 选择外观（system / light / dark）
+4. 配置钱包——三选一：
+   - **新建钱包**——Ghast 生成钱包并展示助记词。请抄下来，之后会要求你确认。
+   - **用助记词导入**
+   - **用私钥导入**
 
-如果你的目标是工作区、本地能力和更深的自动化，这会是更合适的起点。
+钱包步骤完成后，客户端会用本地钱包对后端挑战签名，把钱包绑定到 Profile。
 
-## 引导步骤该怎么理解
+## 第 4 步 — 开始对话
 
-当前引导流程里的不同步骤，并不都代表“必须立刻完成”。
+模型选择器在你接入任何 Provider 之前是空的。最快的方式是配 **0G Router**：
 
-| 步骤 | 建议理解方式 |
-| --- | --- |
-| 钱包 | 基础能力的关键步骤，建议优先完成 |
-| 工作区 | 只有在你准备使用本地工作区能力时才真正重要 |
-| 远程控制 | 有远程使用需求时再继续配置 |
-| 模型 | 准备正式使用模型时再完善 |
-| Companion | 想获得更强本地能力时再安装 |
+1. 浏览器打开 <https://pc.0g.ai/>（0G Compute Console），注册账号、充值余额、生成 API key。
+2. 在 Ghast 里到 **Settings → Providers → Router**，把 API key 粘贴进去。
+3. Router 的模型出现在模型选择器里。
 
-也就是说，首次上手不需要把所有步骤都当成同等优先级。
+然后在主对话窗：
 
-## 使用前需要知道的三件事
+- 在底部输入框里输入提示词，按回车发送。
+- 响应会流式显示。如果 Agent 调用了工具，会以可折叠卡片呈现。
+- 附件与语音输入在输入框上的图标里。
 
-### Companion 不是一开始必须安装
+## 第 5 步 — 按需逐项启用其他集成
 
-Ghast AI 当前的很多基础能力不依赖 Companion，因此你完全可以先只安装扩展，熟悉产品之后再决定是否继续接入本地能力。
+下面这些功能不是必须的，按需开启即可。
 
-### Companion 当前通过安装包分发
+| 集成 | 解锁什么 | 入口 |
+| --- | --- | --- |
+| **0G Advanced 供应商** | 特定的链上 TEE 模型与能力徽章 | [推理模式](/cn/web3/inference-modes) |
+| **0G Storage 同步** | 跨设备的端到端加密备份 | [0G Storage 加密同步](/cn/web3/0g-storage-sync) |
+| **Chrome 扩展** | Agent 操控你已经登录的 Chrome | [浏览器扩展](/cn/browser-extension/install-and-pair) |
+| **Computer Use** | Agent 操作 macOS 应用 | [Computer Use](/cn/computer-use/macos-permissions) |
+| **消息桥接** | Agent 在 Telegram / Discord / Slack / 飞书 / 微信 里直接回复 | [远程消息通道](/cn/remote-channels/overview) |
+| **MCP 服务** | 给 Agent 接入外部工具 | [MCP 服务](/cn/desktop/mcp-servers) |
+| **Partner Mode** | 长期协作的人格层 | [Partner Mode](/cn/partner-mode/overview) |
 
-如果你需要本地能力，当前标准路径是从[官方 Releases 页面](https://github.com/Trapezohe/companion_service/releases)直接下载安装包，而不是先通过 Terminal 安装。
+## 第一次使用的典型 15 分钟
 
-### Companion 安装时可能出现系统安全提示
+可以这样安排：
 
-Companion 安装包当前尚未附带代码签名证书，因此 macOS 或 Windows 可能提示安全风险。只有在确认下载来源来自[官方 Releases 页面](https://github.com/Trapezohe/companion_service/releases)，且校验结果与 `SHA256SUMS.txt` 一致时，才应继续安装。
+1. 安装、登录、创建钱包、走完 Onboarding。
+2. 在 0G Compute Console 充值并把 Router API key 粘贴进 Ghast。
+3. 发 2–3 条消息确认 Router 上的对话正常工作。
+4. 打开 Settings → Memory，浏览一下被存进去的记忆。
+5. 打开 Settings → Wallet 查看你的地址（如果打算用 Advanced 供应商，可往 0G Ledger 充一点 OG 备用）。
+6. 关闭再重开应用，确认对话还在。
 
-## 推荐的开始方式
-
-如果你不确定应该怎么开始，建议按下面这条最稳妥的顺序使用：
-
-1. 先完成扩展安装、登录和钱包设置。
-2. 先在支持页面上体验聊天和页面结合能力。
-3. 确认产品适合自己后，再安装 Companion。
-4. 如果安装 Companion，优先使用官方安装包与自动识别。
-5. 最后再去配置工作区、远程控制和更强的本地能力。
-
-这样做的好处是，你可以先用最低成本建立对产品的整体认识，再逐步增加能力深度。
-
-Ghast AI 当前推荐采用“先扩展、后 Companion；先基础体验、后本地能力”的上手方式。对普通用户而言，先完成安装、登录和钱包设置即可开始使用；只有在明确需要工作区或更强本地能力时，再从[官方 Releases 页面](https://github.com/Trapezohe/companion_service/releases)下载安装 Companion，并优先使用自动识别。
+如果上述六步都正常，说明安装健康。之后可以按你自己的节奏切到上一节的集成表。
 
 ## 相关页面
 
-- [安装扩展](../extension/install-extension.md)
-- [登录与激活](../extension/sign-in-and-activation.md)
-- [钱包设置](../extension/wallet-setup.md)
-- [安装 Companion](install-companion.md)
+- [系统要求](/cn/start-here/system-requirements)
+- [安装 Ghast AI Desktop](/cn/desktop/install)
+- [登录与激活](/cn/desktop/sign-in-and-activation)
+- [钱包与密钥托管](/cn/web3/wallet-and-key-custody)
+- [故障排查：登录与激活](/cn/troubleshooting/login-and-activation)

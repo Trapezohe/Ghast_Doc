@@ -1,101 +1,64 @@
 ---
 title: Security Overview
-description: High-level security model for Ghast AI.
+description: Every trust boundary in Ghast AI, in one place, for audit and review.
 ---
 
 # Security Overview
 
-## Overview
+This page is the single-page summary of every trust boundary in Ghast AI. The sub-pages drill into specific surfaces — wallet, data, Computer Use, Partner Mode — but if you only have time to read one page, read this one.
 
-This page explains the practical security boundaries that Ghast AI enforces by default so you can understand what stays contained, what requires active decision-making, and how those choices affect the risk surface.
+## The trust model in one sentence
 
-Most users only need one takeaway: keep the default settings whenever possible so you retain the product's built-in constraints while keeping it usable.
+**Ghast is a non-custodial, local-first client.** Your wallet keys stay on your machine, your data stays on your machine by default, and the on-chain layer (0G Compute / Storage) is the only outbound surface unless you opt into the rest.
 
-## Default mindset
+## The boundaries
 
-Ghast AI's default approach is not "open everything and expect the user to lock it later." It is "start from a deliberate set of constraints, then loosen them only as needed."
+| Boundary | What it means | Where to read more |
+| --- | --- | --- |
+| **Wallet boundary** | Ghast does not custody funds. The wallet key is encrypted with a profile-scoped vault key (never on disk). Signing is in-memory and ephemeral. | [Wallet & Key Custody](/en/security/wallet-key-custody) |
+| **Profile boundary** | Each profile is fully isolated. Two profiles cannot read each other's data, share a wallet, or share memories. | [Profiles & Workspaces](/en/desktop/profiles-and-workspaces) |
+| **Local data boundary** | All conversations, memories, settings, MCP config sit in a per-profile SQLite database. They do not leave the machine unless you opt into sync. | [Local Data Storage](/en/security/local-data-storage) |
+| **Cloud sync boundary** | 0G Storage sync is opt-in per category. End-to-end encrypted with a key derived from your wallet via HKDF-SHA256. | [Encrypted Cloud Sync](/en/security/encrypted-cloud-sync) |
+| **macOS permission boundary** | Computer Use needs Accessibility (mandatory) and Screen Recording (for full-fidelity screenshots). All are opt-in via System Settings. | [macOS Permissions](/en/security/macos-permissions) |
+| **Per-app approval boundary** | Even with Accessibility granted, modifying actions on a new app require explicit user approval through a UI modal. | [Computer Use Boundary](/en/security/computer-use-boundary) |
+| **Daemon hard blocklist** | Even with UI approval, the Swift daemon refuses certain app categories (password managers, sensitive system tools). Defense-in-depth. | [Computer Use Boundary](/en/security/computer-use-boundary) |
+| **Browser relay boundary** | Connection requires a per-profile random token; sockets are localhost-only. Token can be rotated. | [Browser Extension: Security](/en/browser-extension/security) |
+| **Bridge channel boundary** | Messages are only routed from channels you've explicitly mapped to a workspace. Unmapped messages are ignored. | [Remote Channels: Overview](/en/remote-channels/overview) |
+| **Bridge actor boundary** | In groups, non-actor messages are observed but don't drive agent actions without your approval. | [Remote Channels: Approval Flow](/en/remote-channels/approval-flow) |
+| **Partner Mode boundary** | Eight hard boundaries that no scenario pack, channel override, or turn instruction can relax. UUM is schema-constrained. | [Partner Mode Boundary](/en/security/partner-mode-boundary) |
 
-Key signals of this mindset include:
+## What this stack assumes
 
-- Companion favoring workspace-level access by default
-- Wallet locking automatically whenever it is inactive
-- Page context collection only on supported sites by default
-- Remote control and syncing remaining opt-in capabilities, not forced on every install
+Ghast's security model assumes:
 
-As a result, the standard install state is more restrained than an "open local machine + gather every page + keep wallet unlocked forever" configuration.
+- **You control your local machine.** The threat model is not "another local user takes over your account." That risk requires OS-level mitigations Ghast does not provide.
+- **Your wallet mnemonic is your responsibility.** Ghast does not back it up. Lose the mnemonic and the device → lose the wallet.
+- **You vet the apps you grant Computer Use.** Allow Always is your call; the per-app gate is the moment to make it.
+- **The on-chain layer's correctness is not the client's concern.** 0G chain integrity, provider TEE behaviour, and the underlying contracts are out of scope for this client.
 
-## The four boundaries
+## What this stack does *not* protect against
 
-### 1. Browser boundary
+- **Malware on your Mac with full disk access** while you're signed in. With both `wallet.json` and the in-memory vault key, an attacker decrypts the wallet.
+- **A compromised model.** If the inference provider's TEE is compromised, the prompts you sent that provider are exposed. Funded providers' identities are at least on-chain; the rest is provider-side.
+- **A compromised messaging platform.** Telegram seeing your conversations is a Telegram thing; Ghast doesn't add a second layer of encryption on top of their wire protocol.
+- **Social engineering of the model.** Untrusted content in chat (a screenshot, a tool result, a remote message) can attempt to get the model to do things outside the user's intent. Hard boundaries help; they don't fully eliminate this risk.
+- **OS-level exploits in macOS or Chrome.** Out of scope.
 
-Ghast AI is delivered through a browser extension. The extension has the permissions it needs, but it does not start capturing every page automatically. Only the sites covered in the supported list are in scope by default.
+## How to review the model yourself
 
-For everyday use, this means:
+Three sources of truth, in order of priority:
 
-- Not every page becomes an AI context by default
-- Page-related capabilities remain in a known, documented scope
-- If you explicitly widen browser permissions, the boundary expands accordingly
+1. **This documentation set.** Wrong here → wrong somewhere.
+2. **The source code.** Specifically `src/main/auth/profile/wallet-keystore.ts`, `src/main/computer-use/computer-use-approval-gate.ts`, `computer-use/Sources/`, `src/main/zerog-compute/`, and `src/main/services/data-sync-service.ts`.
+3. **The active runtime.** What permissions the app has in macOS Privacy & Security. What's in the Computer Use Action Log. What's in the bridge logs.
 
-### 2. Local boundary
+Discrepancies between (1) and (2) are documentation bugs we want to know about.
 
-Companion handles the local capabilities that a browser cannot: workspace access, richer local execution, and closer interaction with your projects. Out of the box, it is aligned with your workspace instead of assuming the whole machine is fair game.
+## Related pages
 
-This boundary keeps the local risk surface focused on a clear directory, and you only open it wider when you truly need broader local access.
-
-### 3. Wallet boundary
-
-Wallet handling is treated as a separate security boundary. The wallet lives inside the extension, stays encrypted, and locks itself automatically when idle.
-
-That design reminds you that wallet capabilities are not just another local feature. They have their own risk level, and keeping them unlocked for long periods noticeably increases exposure.
-
-### 4. Remote boundary
-
-Remote control remains an opt-in capability. Even when you enable it, the sources of input stay separated from your local input, and approvals are not accepted anonymously.
-
-Thus:
-
-- Remote usage does not become indistinguishable from local usage
-- Remote approvals are not "anyone can confirm in your place"
-- Local actions, remote actions, and scheduled triggers remain distinguishable
-
-## What to keep unchanged
-
-For normal daily use, keep these defaults:
-
-1. Continue using Companion in the workspace-centric mode it starts in
-2. Let the wallet lock itself automatically when you are away
-3. Only widen browser permissions when a supported workflow truly requires it
-4. Keep remote control off unless you specifically need it
-
-These choices preserve the baseline experience while keeping the additional safeguards in place.
-
-## What enlarges the boundary
-
-These are not "minor setting tweaks"; they change how much the product exposes:
-
-- Switching Companion to `full` mode
-- Granting broader browser permissions beyond the supported site list
-- Keeping the wallet unlocked for extended periods
-- Enabling remote control and allowing remote approvals
-
-After any of these changes, the system is no longer operating in the default constrained mode.
-
-## Recommended use
-
-Follow this sequence for a cautious, stable posture:
-
-1. Install the extension and Companion through the standard flow.
-2. Confirm which capabilities you actually need before loosening defaults.
-3. Only expand local access once you have a clear requirement for it.
-4. Revisit the boundary implications after every deliberate expansion.
-
-## Next pages
-
-If there is one single summary, remember: Ghast AI ships with a "loosen as needed" mindset rather than "default everything open."
-
-Subsequent pages dive deeper into each boundary:
-
-- Browser permissions and page context handling
-- Wallet handling and key storage
-- Companion's local execution model
-- Security comparison with OpenClaw
+- [macOS Permissions](/en/security/macos-permissions)
+- [Wallet & Key Custody](/en/security/wallet-key-custody)
+- [Local Data Storage](/en/security/local-data-storage)
+- [Encrypted Cloud Sync](/en/security/encrypted-cloud-sync)
+- [Computer Use Boundary](/en/security/computer-use-boundary)
+- [Partner Mode Boundary](/en/security/partner-mode-boundary)
