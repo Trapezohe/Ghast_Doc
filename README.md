@@ -1,3 +1,5 @@
+<p align="center"><img src="./docs/assets/ghast-logo.png" alt="Ghast AI" width="120" /></p>
+
 # Ghast Doc
 
 Ghast AI — private expertise, callable by agents. We're building the protocol that lets experts and teams offer their know-how as services AI agents can find, trust and pay for, starting with Ghast Workbench, our desktop AI agent workspace.
